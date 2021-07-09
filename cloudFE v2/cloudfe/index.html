@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+		<script src="js/jquery.min.js"></script>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+        <script src="js/modernizr-2.6.2.min.js"></script>
+    </head>
+    <body>
+        <ul id="albumList"
+            data-bind="foreach: items,
+                       css: slidingStatus,
+                       style: {webkitTransitionDuration: duration() + 's'},
+                       event: {webkitTransitionEnd: completeTransition}">
+          <li data-bind="css: {current: index() == $root.currentIndex(),
+                             'fade-in': fadingStatus() == 'fade-in',
+                            'fade-out': fadingStatus() == 'fade-out'}">
+            <img style="height:auto; width:auto; max-width:200px; " data-bind="attr: {src: imageSource}"/>
+          </li>
+        </ul>
+		<br/><br/>
+			<table width='100%' ><tr><td >
+			<div id="left">
+				<h2   style="max-width: 500px;" id='name'></h2>
+				<div id="publisher"></div>
+				<div id="developer"></div>
+				<div id="region"></div>
+				<div id="genre"></div>
+				<div id="rating"></div>
+				<div id="players"></div>
+				<div id="total_sz"></div>
+				<div style="max-width: 500px;" id="description"></div>
+			</div>
+			</td><td align='right'>
+			<div ><div align='right'>
+				<video id='entry_video' loop='loop' width='640' height='480' src=''>
+				</video>  </div>
+			</div>
+			</td></tr></table>
+			<form id='entry_form' method='get' action='run'><input type='hidden' id='selected_id' name='req' value=''></form>
+        <script data-main="js/main" src="js/require.js"></script>
+		ADD_ANYTHING_ELSE_HERE
+    </body>
+</html>

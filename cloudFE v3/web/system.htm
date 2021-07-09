@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html class="no-js">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+		<link rel="shortcut icon" href="web/image/favicon.ico" type="image/x-icon" />
+        <link rel="stylesheet" href="web/css/normalize.css">
+        <link rel="stylesheet" href="web/css/main.css">
+        <script src="web/js/modernizr-2.6.2.min.js"></script>
+		<script src="web/js/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.3/jquery-ui.min.js"></script>
+		<link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/dot-luv/jquery-ui.css">
+  <script>
+  $.rv_ret = {};
+  
+
+  </script>
+  <script>
+
+  $(function() {
+
+
+    var progressTimer,
+      progressbar = $( "#progressbar" ),
+      progressLabel = $( ".progress-label" ),
+      dialogButtons = [],
+      dialog = $( "#dialog" ).dialog({
+        autoOpen: false,
+        closeOnEscape: false,
+        resizable: false,
+        buttons: dialogButtons,
+        open: function() {
+			
+          progressTimer = setTimeout( progress, 2000 );
+        },
+        beforeClose: function() {
+          downloadButton.button( "option", {
+            disabled: false,
+            label: "Start Download"
+          });
+         saveButton.button( "option", {
+            disabled: false,
+            label: "Save On Device"
+          });
+        }
+      }),
+	  mainMenuButton = $("#mainMenuButton").button()
+	  .on("click",function(){
+	  window.location.replace("/");
+	  });
+	deleteButton = $("#deleteButton").button()
+	  .on("click",function(){
+
+			$.get( "run?entry_id="+$("#selected_id").val()+"&loaders_folder_id="+$("#loaders_folder_id").val()+"&system_name="+$("#system_name").val()+"&cs_name="+$("#cs_name").val()+"&pref_loader="+$("#pref_loader").val()+"&wipe_cache=yes", function( data ) {
+			});
+
+	  });
+	  saveButton = $("#saveButton").button()
+	  .on("click",function(){
+$("#entry_video").get(0).pause();
+			$.get( "run?entry_id="+$("#selected_id").val()+"&loaders_folder_id="+$("#loaders_folder_id").val()+"&system_name="+$("#system_name").val()+"&cs_name="+$("#cs_name").val()+"&pref_loader="+$("#pref_loader").val()+"&save_only=yes", function( data ) {
+			});
+			$.get( "download_progress", function( data ) {
+		$.rv_ret = JSON.parse(data);});
+          $( this ).button( "option", {
+            disabled: true,
+            label: "Saving Locally..."
+          });
+          dialog.dialog( "open" );
+	  });
+      downloadButton = $( "#downloadButton" )
+        .button()
+        .on( "click", function() {
+			$("#entry_video").get(0).pause();
+			$.get( "run?entry_id="+$("#selected_id").val()+"&loaders_folder_id="+$("#loaders_folder_id").val()+"&system_name="+$("#system_name").val()+"&cs_name="+$("#cs_name").val()+"&pref_loader="+$("#pref_loader").val(), function( data ) {
+			});
+			$.get( "download_progress", function( data ) {
+		$.rv_ret = JSON.parse(data);});
+          $( this ).button( "option", {
+            disabled: true,
+            label: "Downloading..."
+          });
+          dialog.dialog( "open" );
+        });
+ 
+    progressbar.progressbar({
+      value: false,
+      change: function() {
+		
+        progressLabel.text( ""+$.rv_ret['down_str']+" "+$.rv_ret['down_pr'] + "%" );
+      },
+      complete: function() {
+		
+        progressLabel.text( "Finished - Click Done to return." );
+        dialog.dialog( "option", "buttons", [{
+          text: "Done",
+          click: closeDownload
+        }]);
+        $(".ui-dialog button").last().focus();
+      }
+    });
+	
+	
+    function progress() {
+	
+      var val = progressbar.progressbar( "value" ) || {'down_str':"0 / 0","down_pr":0};
+	$.get( "download_progress", function( data ) {
+		$.rv_ret = JSON.parse(data);});
+		
+	  if($.rv_ret['down_pr'] != {}){
+		val = $.rv_ret;
+		if(val['down_pr'] > 100){
+		val['down_pr'] = 100;
+		}
+	  }
+      progressbar.progressbar( "value", val['down_pr'] );
+	  
+	
+      if ( val['down_pr'] <= 99 ) {
+        progressTimer = setTimeout( progress, 3000 );
+		
+      }
+	  
+    }
+ 
+    function closeDownload() {
+	  $.get( "reset", function( data ) {});
+	  $("#entry_video").get(0).play();
+      clearTimeout( progressTimer );
+      dialog
+        .dialog( "option", "buttons", dialogButtons )
+        .dialog( "close" );
+      progressbar.progressbar( "value", false );
+      progressLabel
+        .text( "Starting download..." );
+      downloadButton.focus();
+    }
+  });
+  </script>
+  <style>
+  #progressbar {
+    margin-top: 20px;
+  }
+ 
+  .progress-label {
+    font-weight: bold;
+    text-shadow: 1px 1px 0 #fff;
+  }
+ 
+  .ui-dialog-titlebar-close {
+    display: none;
+  }
+  </style>
+    </head>
+    <body>
+		<h3 style="padding-left:50px;" id='system_banner'></h3>
+        <ul id="albumList"
+            data-bind="foreach: items,
+                       css: slidingStatus,
+                       style: {webkitTransitionDuration: duration() + 's'},
+                       event: {webkitTransitionEnd: completeTransition}">
+          <li data-bind="css: {current: index() == $root.currentIndex(),
+                             'fade-in': fadingStatus() == 'fade-in',
+                            'fade-out': fadingStatus() == 'fade-out'}">
+            <img style="height:auto; width:auto; max-width:200px; " data-bind="attr: {src: imageSource}"/>
+          </li>
+        </ul>
+		<br/><br/>
+			<table width='100%' ><tr><td >
+			<div id="left">
+				<h2   style="max-width: 500px;" id='name'></h2>
+				<div id="on_device"></div>
+				<div id="publisher"></div>
+				<div id="developer"></div>
+				<div id="region"></div>
+				<div id="genre"></div>
+				<div id="rating"></div>
+				<div id="players"></div>
+				<div id="total_sz"></div>
+				<div style="max-width: 500px;" id="description"></div>
+			</div>
+			</td><td align='center'>
+			<div id="dialog" title="Downloading App">
+			<div class="progress-label">Downloading...</div>
+			<div id="progressbar"></div>
+			</div>
+			<button id="downloadButton">Play Game</button><br/>
+			<button id="saveButton">Save On Device</button><br/>
+			<button id="deleteButton">Delete From Device</button><br/>
+			<button id="mainMenuButton">Main Menu</button><br/>
+			
+			</td><td align='right'>
+			<div ><div align='right'>
+				<video id='entry_video' loop='loop' width='640' height='480' src=''>
+				</video>  </div>
+			</div>
+			</td></tr></table>
+		
+			<form id='entry_form' method='get' action='run'>
+			<input type='hidden' id='selected_id' name='selected_id' value=''>
+			<input type='hidden' id='system_name' name='system_name' value=''>
+			<input type='hidden' id='cs_name' name='cs_name' value=''>
+			<input type='hidden' id='loaders_folder_id' name='loaders_folder_id' value=''>
+			<input type='hidden' id='pref_loader' name='pref_loader' value=''>
+			</form>
+        <script data-main="web/js/main.js" src="web/js/require.js"></script>
+		
+		ADD_ANYTHING_ELSE_HERE
+		<script>$("#system_banner").html(selected_system);</script>
+    </body>
+</html>

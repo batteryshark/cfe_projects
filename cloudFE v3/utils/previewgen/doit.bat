@@ -1,0 +1,1 @@
+for %%f in (*.avi) do ffmpeg.exe -i "%%f" -vf scale=320:240 "%%f_preview.mp4"

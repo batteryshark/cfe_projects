@@ -1,0 +1,4 @@
+#onedrive share example
+OneDrive::{SAMPLE_FOLDER_ID}
+#google drive example
+GDrive::{SAMPLE_FOLDER_ID}

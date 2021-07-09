@@ -1,0 +1,1 @@
+{"service_type":"OneDrive","auth_uri":"https://login.live.com/oauth20_authorize.srf","client_secret":"[ENTERSECRET]","token_uri":"https://login.live.com/oauth20_token.srf","redirect_uri":"[ENTER_REDIRECTURI]","scopes":"wl.signin,wl.contacts_skydrive,wl.offline_access,onedrive.readwrite,wl.skydrive_update","client_id":"[ENTERCLIENTID]"}
